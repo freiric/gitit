@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables, StandaloneDeriving #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-
 Copyright (C) 2009 John MacFarlane <jgm@berkeley.edu>,
                    Henry Laxen <nadine.and.henry@pobox.com>
@@ -39,7 +39,7 @@ import Text.XHtml hiding ( (</>), dir, method, password, rev )
 import qualified Text.XHtml as X ( password )
 import System.Process (readProcessWithExitCode)
 import Control.Monad (unless, liftM, mplus)
-import Control.Monad.Trans (MonadIO(), liftIO)
+import Control.Monad.Trans (liftIO)
 import System.Exit
 import System.Log.Logger (logM, Priority(..))
 import Data.Char (isAlphaNum, isAlpha, isAscii)
