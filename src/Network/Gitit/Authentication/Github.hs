@@ -17,7 +17,6 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified URI.ByteString as URI
 import Network.HTTP.Conduit
 import Network.OAuth.OAuth2
-import Network.OAuth.OAuth2.TokenRequest as OA
 import Control.Monad (liftM, mplus, mzero)
 import Data.Maybe
 import Data.Aeson
@@ -102,13 +101,13 @@ instance FromData GithubCallbackPars where
          vState <- liftM Just (look "state") `mplus` return Nothing
          return GithubCallbackPars {rCode = vCode, rState = vState}
 
-userInfo :: Manager -> AccessToken -> IO (OAuth2Result OA.Errors GithubUser)
+userInfo :: Manager -> AccessToken -> IO (Either BSL.ByteString GithubUser)
 userInfo mgr token = authGetJSON mgr token $ githubUri "/user"
 
-mailInfo :: Manager -> AccessToken -> IO (OAuth2Result OA.Errors [GithubUserMail])
+mailInfo :: Manager -> AccessToken -> IO (Either BSL.ByteString [GithubUserMail])
 mailInfo mgr token = authGetJSON mgr token $ githubUri "/user/emails"
 
-orgInfo  :: Text -> Text -> Manager -> AccessToken -> IO (OAuth2Result OA.Errors BSL.ByteString)
+orgInfo  :: Text -> Text -> Manager -> AccessToken -> IO (Either BSL.ByteString BSL.ByteString)
 orgInfo gitLogin githubOrg mgr token = do
   let url = githubUri $ "/orgs/" `BS.append` encodeUtf8 githubOrg `BS.append` "/members/" `BS.append` encodeUtf8 gitLogin
   authGetBS mgr token url
