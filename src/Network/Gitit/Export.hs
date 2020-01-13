@@ -48,6 +48,7 @@ import Text.Pandoc.Writers.RTF (writeRTF)
 import Data.ByteString.Lazy (fromStrict)
 import Data.Text (Text)
 import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
 import Data.Text.Encoding (encodeUtf8)
 import Data.List (isPrefixOf)
 import Skylighting (styleToCss, pygments)
@@ -67,7 +68,7 @@ respondX templ mimetype ext fn opts page doc = do
   doc'' <- liftIO $ runIO $ do
         setUserDataDir $ pandocUserData cfg
         template <- getDefaultTemplate (T.pack templ)
-        compiledTemplate <- compileTemplate templ template
+        compiledTemplate <- runWithPartials $ compileTemplate templ template
         case compiledTemplate of
           Right t -> fn opts{ writerTemplate = Just t } doc'
           Left e  -> throwError $ PandocTemplateError $ T.pack e
@@ -112,7 +113,7 @@ respondSlides templ fn page doc = do
                           else return mempty
           template <- getDefaultTemplate (T.pack templ)
           compiledTemplate <- do
-            res <- compileTemplate templ template
+            res <- runWithPartials $ compileTemplate templ template
             case res of
               Right t  -> return t
               Left e   -> throwError $ PandocTemplateError $ T.pack e
@@ -231,7 +232,7 @@ respondPDF useBeamer page old_pndc = fixURLs page old_pndc >>= \pndc -> do
                 let templ = if useBeamer then "beamer" else "latex"
                 template <- getDefaultTemplate templ
                 compiledTemplate <- do
-                  res <- compileTemplate (T.unpack templ) template
+                  res <- runWithPartials $ compileTemplate (T.unpack templ) template
                   case res of
                     Right t  -> return t
                     Left e   -> throwError $ PandocTemplateError $ T.pack e
