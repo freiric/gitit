@@ -37,7 +37,7 @@ matrix:
 
   # The Stack builds. We can pass in arbitrary Stack arguments via the ARGS
   # variable, such as using --stack-yaml to point to a different file.
-  - env: BUILD=stack ARGS="--resolver lts-12"
+  - env: BUILD=stack ARGS="--resolver lts-14.14"
     compiler: ": #stack 8.4.3"
     addons: {apt: {packages: [ghc-8.4.3], sources: [hvr-ghc]}}
 
